@@ -47,9 +47,13 @@ $app->post('/message', function (Request $request, Response $response, $args) {
         return ResponseHelper::jsonResponseWrapper($response, 422, ['error' => "Chat with id: {$params['chatId']} doesn't exists"]);
     }
 
-    $result = MessageRepository::createMessage($params['chatId'], $params['message'], $params['userName']);
-    if (!$result) {
-        return ResponseHelper::jsonResponseWrapper($response, 500, ['error' => "Server internal error"]);
+    try {
+        $result = MessageRepository::createMessage($params['chatId'], $params['message'], $params['userName']);
+        if (!$result) {
+            return ResponseHelper::jsonResponseWrapper($response, 500, ['error' => "Server internal error"]);
+        }
+    } catch (Exception $e) {
+        return ResponseHelper::jsonResponseWrapper($response, 500, ['error' => $e->getMessage()]);
     }
 
     return $response->withStatus(201);

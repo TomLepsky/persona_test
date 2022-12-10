@@ -39,7 +39,9 @@ class MessageRepository
     public static function getMessages(int $chatId = 0, int $page = 1, int $pageSize = 10) : array
     {
         $placeHolders = [];
-        $sql = "SELECT * FROM `message` ";
+        $sql = "SELECT m.id as id, m.chat_id as chat_id, m.user_id as user_id, u.name as user_name, m.message as message, m.date as date 
+                FROM `message` m 
+                LEFT JOIN `user` u ON m.user_id = u.id";
         if ($chatId !== 0) {
             $sql .= " WHERE chat_id = :chatId ";
             $placeHolders[':chatId'] = $chatId;
